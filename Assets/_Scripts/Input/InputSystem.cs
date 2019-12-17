@@ -7,25 +7,43 @@ using Unity.Entities;
 namespace FireFighter.Input
 {
     [AlwaysUpdateSystem]
-    public class InputSystem : ComponentSystem, InputActions.IGamePlayActions
+    public class InputSystem : ComponentSystem, InputActions.ICharacterControllerActions
     {
         private InputActions inputActions;
+        private bool jumpInput = false;
+        private Vector2 moveInput = Vector2.zero;
+        private Vector2 aimInput = Vector2.zero;
 
+        private EntityQuery characterControllerInputEntityQuery;
+
+        #region System Life Cycle
         protected override void OnCreate()
         {
             inputActions = new InputActions();
-            inputActions.GamePlay.SetCallbacks(this);
+            inputActions.CharacterController.SetCallbacks(this);
+
+            characterControllerInputEntityQuery = GetEntityQuery(typeof(CharacterControllerInputComponentData));
         }
 
         protected override void OnStartRunning()
         {
             inputActions.Enable();
-            inputActions.GamePlay.Enable();
+            inputActions.CharacterController.Enable();
         }
 
         protected override void OnUpdate()
         {
-            //Debug.Log(inputActions.GamePlay.Move.ReadValue<Vector2>());
+            if (characterControllerInputEntityQuery.CalculateEntityCount() == 0)
+                EntityManager.CreateEntity(typeof(CharacterControllerInputComponentData));
+
+            characterControllerInputEntityQuery.SetSingleton(new CharacterControllerInputComponentData
+            {
+                Move = moveInput,
+                Aim = aimInput,
+                Jump = jumpInput
+            });
+
+            jumpInput = false;
         }
 
         protected override void OnStopRunning()
@@ -37,20 +55,24 @@ namespace FireFighter.Input
         {
             inputActions.Dispose();
         }
+        #endregion
 
         public void OnMove(InputAction.CallbackContext context)
         {
-            Debug.Log(context.ReadValue<Vector2>());
+            moveInput = context.ReadValue<Vector2>();
         }
 
         public void OnAim(InputAction.CallbackContext context)
         {
-            throw new System.NotImplementedException();
+            //aimInput = context.ReadValue<Vector2>();
         }
 
-        public void OnShoot(InputAction.CallbackContext context)
+        public void OnJump(InputAction.CallbackContext context)
         {
-            throw new System.NotImplementedException();
+            if(context.started)
+            {
+                jumpInput = true;
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
     "name": "InputActions",
     "maps": [
         {
-            "name": "GamePlay",
+            "name": "CharacterController",
             "id": "6aa0062a-9637-496b-89a8-47ca922c6fdd",
             "actions": [
                 {
@@ -22,9 +22,9 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Shoot",
+                    "name": "Jump",
                     "type": "Button",
-                    "id": "a2abc4aa-226e-4de1-82eb-f3b799b688de",
+                    "id": "8a74818d-5c24-41f5-a240-c6c4c0f9b72a",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
@@ -154,12 +154,12 @@
                 },
                 {
                     "name": "",
-                    "id": "797bbade-dae3-4fde-b0e7-5bbdc09e8aec",
-                    "path": "<Mouse>/leftButton",
+                    "id": "4c7f0395-8768-48bb-bd58-866821dc74fe",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
-                    "groups": "KeyboardMouse",
-                    "action": "Shoot",
+                    "groups": "",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -1,7 +1,9 @@
-﻿using System;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
+using FireFighter.Input;
 using static Unity.Physics.PhysicsStep;
 
 namespace FireFighter.CharacterController
@@ -41,8 +43,6 @@ namespace FireFighter.CharacterController
 
         // Whether to affect other rigid bodies
         public int AffectsPhysicsBodies = 1;
-
-        void OnEnable() { }
 
         void IConvertGameObjectToEntity.Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {

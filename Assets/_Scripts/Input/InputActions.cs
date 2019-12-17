@@ -17,7 +17,7 @@ namespace FireFighter.Input
     ""name"": ""InputActions"",
     ""maps"": [
         {
-            ""name"": ""GamePlay"",
+            ""name"": ""CharacterController"",
             ""id"": ""6aa0062a-9637-496b-89a8-47ca922c6fdd"",
             ""actions"": [
                 {
@@ -37,9 +37,9 @@ namespace FireFighter.Input
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Shoot"",
+                    ""name"": ""Jump"",
                     ""type"": ""Button"",
-                    ""id"": ""a2abc4aa-226e-4de1-82eb-f3b799b688de"",
+                    ""id"": ""8a74818d-5c24-41f5-a240-c6c4c0f9b72a"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
@@ -169,12 +169,12 @@ namespace FireFighter.Input
                 },
                 {
                     ""name"": """",
-                    ""id"": ""797bbade-dae3-4fde-b0e7-5bbdc09e8aec"",
-                    ""path"": ""<Mouse>/leftButton"",
+                    ""id"": ""4c7f0395-8768-48bb-bd58-866821dc74fe"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""KeyboardMouse"",
-                    ""action"": ""Shoot"",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -200,11 +200,11 @@ namespace FireFighter.Input
         }
     ]
 }");
-            // GamePlay
-            m_GamePlay = asset.FindActionMap("GamePlay", throwIfNotFound: true);
-            m_GamePlay_Move = m_GamePlay.FindAction("Move", throwIfNotFound: true);
-            m_GamePlay_Aim = m_GamePlay.FindAction("Aim", throwIfNotFound: true);
-            m_GamePlay_Shoot = m_GamePlay.FindAction("Shoot", throwIfNotFound: true);
+            // CharacterController
+            m_CharacterController = asset.FindActionMap("CharacterController", throwIfNotFound: true);
+            m_CharacterController_Move = m_CharacterController.FindAction("Move", throwIfNotFound: true);
+            m_CharacterController_Aim = m_CharacterController.FindAction("Aim", throwIfNotFound: true);
+            m_CharacterController_Jump = m_CharacterController.FindAction("Jump", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -251,39 +251,39 @@ namespace FireFighter.Input
             asset.Disable();
         }
 
-        // GamePlay
-        private readonly InputActionMap m_GamePlay;
-        private IGamePlayActions m_GamePlayActionsCallbackInterface;
-        private readonly InputAction m_GamePlay_Move;
-        private readonly InputAction m_GamePlay_Aim;
-        private readonly InputAction m_GamePlay_Shoot;
-        public struct GamePlayActions
+        // CharacterController
+        private readonly InputActionMap m_CharacterController;
+        private ICharacterControllerActions m_CharacterControllerActionsCallbackInterface;
+        private readonly InputAction m_CharacterController_Move;
+        private readonly InputAction m_CharacterController_Aim;
+        private readonly InputAction m_CharacterController_Jump;
+        public struct CharacterControllerActions
         {
             private @InputActions m_Wrapper;
-            public GamePlayActions(@InputActions wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Move => m_Wrapper.m_GamePlay_Move;
-            public InputAction @Aim => m_Wrapper.m_GamePlay_Aim;
-            public InputAction @Shoot => m_Wrapper.m_GamePlay_Shoot;
-            public InputActionMap Get() { return m_Wrapper.m_GamePlay; }
+            public CharacterControllerActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+            public InputAction @Move => m_Wrapper.m_CharacterController_Move;
+            public InputAction @Aim => m_Wrapper.m_CharacterController_Aim;
+            public InputAction @Jump => m_Wrapper.m_CharacterController_Jump;
+            public InputActionMap Get() { return m_Wrapper.m_CharacterController; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
             public bool enabled => Get().enabled;
-            public static implicit operator InputActionMap(GamePlayActions set) { return set.Get(); }
-            public void SetCallbacks(IGamePlayActions instance)
+            public static implicit operator InputActionMap(CharacterControllerActions set) { return set.Get(); }
+            public void SetCallbacks(ICharacterControllerActions instance)
             {
-                if (m_Wrapper.m_GamePlayActionsCallbackInterface != null)
+                if (m_Wrapper.m_CharacterControllerActionsCallbackInterface != null)
                 {
-                    @Move.started -= m_Wrapper.m_GamePlayActionsCallbackInterface.OnMove;
-                    @Move.performed -= m_Wrapper.m_GamePlayActionsCallbackInterface.OnMove;
-                    @Move.canceled -= m_Wrapper.m_GamePlayActionsCallbackInterface.OnMove;
-                    @Aim.started -= m_Wrapper.m_GamePlayActionsCallbackInterface.OnAim;
-                    @Aim.performed -= m_Wrapper.m_GamePlayActionsCallbackInterface.OnAim;
-                    @Aim.canceled -= m_Wrapper.m_GamePlayActionsCallbackInterface.OnAim;
-                    @Shoot.started -= m_Wrapper.m_GamePlayActionsCallbackInterface.OnShoot;
-                    @Shoot.performed -= m_Wrapper.m_GamePlayActionsCallbackInterface.OnShoot;
-                    @Shoot.canceled -= m_Wrapper.m_GamePlayActionsCallbackInterface.OnShoot;
+                    @Move.started -= m_Wrapper.m_CharacterControllerActionsCallbackInterface.OnMove;
+                    @Move.performed -= m_Wrapper.m_CharacterControllerActionsCallbackInterface.OnMove;
+                    @Move.canceled -= m_Wrapper.m_CharacterControllerActionsCallbackInterface.OnMove;
+                    @Aim.started -= m_Wrapper.m_CharacterControllerActionsCallbackInterface.OnAim;
+                    @Aim.performed -= m_Wrapper.m_CharacterControllerActionsCallbackInterface.OnAim;
+                    @Aim.canceled -= m_Wrapper.m_CharacterControllerActionsCallbackInterface.OnAim;
+                    @Jump.started -= m_Wrapper.m_CharacterControllerActionsCallbackInterface.OnJump;
+                    @Jump.performed -= m_Wrapper.m_CharacterControllerActionsCallbackInterface.OnJump;
+                    @Jump.canceled -= m_Wrapper.m_CharacterControllerActionsCallbackInterface.OnJump;
                 }
-                m_Wrapper.m_GamePlayActionsCallbackInterface = instance;
+                m_Wrapper.m_CharacterControllerActionsCallbackInterface = instance;
                 if (instance != null)
                 {
                     @Move.started += instance.OnMove;
@@ -292,13 +292,13 @@ namespace FireFighter.Input
                     @Aim.started += instance.OnAim;
                     @Aim.performed += instance.OnAim;
                     @Aim.canceled += instance.OnAim;
-                    @Shoot.started += instance.OnShoot;
-                    @Shoot.performed += instance.OnShoot;
-                    @Shoot.canceled += instance.OnShoot;
+                    @Jump.started += instance.OnJump;
+                    @Jump.performed += instance.OnJump;
+                    @Jump.canceled += instance.OnJump;
                 }
             }
         }
-        public GamePlayActions @GamePlay => new GamePlayActions(this);
+        public CharacterControllerActions @CharacterController => new CharacterControllerActions(this);
         private int m_KeyboardMouseSchemeIndex = -1;
         public InputControlScheme KeyboardMouseScheme
         {
@@ -308,11 +308,11 @@ namespace FireFighter.Input
                 return asset.controlSchemes[m_KeyboardMouseSchemeIndex];
             }
         }
-        public interface IGamePlayActions
+        public interface ICharacterControllerActions
         {
             void OnMove(InputAction.CallbackContext context);
             void OnAim(InputAction.CallbackContext context);
-            void OnShoot(InputAction.CallbackContext context);
+            void OnJump(InputAction.CallbackContext context);
         }
     }
 }

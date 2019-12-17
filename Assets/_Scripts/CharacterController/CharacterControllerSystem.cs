@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
+using UnityEngine.Assertions;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -11,7 +11,6 @@ using Unity.Physics;
 using Unity.Physics.Extensions;
 using Unity.Physics.Systems;
 using Unity.Transforms;
-using UnityEngine.Assertions;
 using static FireFighter.CharacterController.CharacterControllerUtilities;
 
 namespace FireFighter.CharacterController
@@ -146,7 +145,7 @@ namespace FireFighter.CharacterController
 
                     float horizontal = ccInternalData.Input.Move.x;
                     float vertical = ccInternalData.Input.Move.y;
-                    bool jumpRequested = ccInternalData.Input.Jump > 0;
+                    bool jumpRequested = ccInternalData.Input.Jump == true;
                     bool haveInput = (math.abs(horizontal) > float.Epsilon) || (math.abs(vertical) > float.Epsilon);
                     if (haveInput)
                     {
