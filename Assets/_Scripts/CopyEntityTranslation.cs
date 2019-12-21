@@ -11,14 +11,14 @@ namespace FireFighter
         private Entity entityToTrack = Entity.Null;
 
         #region Unity Life Cycle
-        private void LateUpdate()
+        private void Update()
         {
             if(entityToTrack == Entity.Null)
             {
                 return;
             }
 
-            var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
             transform.position = entityManager.GetComponentData<Translation>(entityToTrack).Value;
         }

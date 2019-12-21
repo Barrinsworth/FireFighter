@@ -16,7 +16,7 @@ namespace FireFighter
             dstManager.AddComponentData(entity, new SentEntity() { });
             foreach (var EntityReceiver in EntityReceiverGameObjects)
             {
-                var potentialReceivers = EntityReceiver.GetComponents<MonoBehaviour>();
+                MonoBehaviour[] potentialReceivers = EntityReceiver.GetComponents<MonoBehaviour>();
                 foreach (var potentialReceiver in potentialReceivers)
                 {
                     if (potentialReceiver is IEntityReceiver receiver)

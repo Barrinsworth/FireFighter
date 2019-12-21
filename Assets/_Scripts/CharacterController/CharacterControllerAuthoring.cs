@@ -48,7 +48,7 @@ namespace FireFighter.CharacterController
         {
             if (enabled)
             {
-                var componentData = new CharacterControllerComponentData
+                CharacterControllerComponentData componentData = new CharacterControllerComponentData
                 {
                     Gravity = Gravity,
                     MovementSpeed = MovementSpeed,
@@ -62,7 +62,7 @@ namespace FireFighter.CharacterController
                     ContactTolerance = ContactTolerance,
                     AffectsPhysicsBodies = AffectsPhysicsBodies,
                 };
-                var internalData = new CharacterControllerInternalComponentData
+                CharacterControllerInternalComponentData internalData = new CharacterControllerInternalComponentData
                 {
                     Entity = entity,
                     Input = new CharacterControllerInputComponentData(),

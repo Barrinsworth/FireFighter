@@ -10,6 +10,6 @@ namespace FireFighter.Input
     {
         public float2 Move;
         public float2 Aim;
-        public bool Jump;
+        public byte Jump;
     }
 }

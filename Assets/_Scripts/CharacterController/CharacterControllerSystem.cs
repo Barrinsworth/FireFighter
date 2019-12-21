@@ -15,6 +15,7 @@ using static FireFighter.CharacterController.CharacterControllerUtilities;
 
 namespace FireFighter.CharacterController
 {
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(ExportPhysicsWorld)), UpdateBefore(typeof(EndFramePhysicsSystem))]
     public class CharacterControllerSystem : JobComponentSystem
     {
@@ -145,24 +146,49 @@ namespace FireFighter.CharacterController
 
                     float horizontal = ccInternalData.Input.Move.x;
                     float vertical = ccInternalData.Input.Move.y;
-                    bool jumpRequested = ccInternalData.Input.Jump == true;
+                    bool jumpRequested = ccInternalData.Input.Jump > 0;
                     bool haveInput = (math.abs(horizontal) > float.Epsilon) || (math.abs(vertical) > float.Epsilon);
                     if (haveInput)
                     {
                         float3 localSpaceMovement = forward * vertical + right * horizontal;
-                        float3 worldSpaceMovement = math.rotate(quaternion.AxisAngle(up, ccInternalData.CurrentRotationAngle), localSpaceMovement);
-                        requestedMovementDirection = math.normalize(worldSpaceMovement);
+                        //float3 worldSpaceMovement = math.rotate(quaternion.AxisAngle(up, ccInternalData.CurrentRotationAngle), localSpaceMovement);
+                        //requestedMovementDirection = math.normalize(worldSpaceMovement);
+                        requestedMovementDirection = localSpaceMovement;
                     }
                     shouldJump = jumpRequested && ccInternalData.SupportedState == CharacterSupportStateEnum.Supported;
                 }
 
                 // Turning
                 {
-                    float horizontal = ccInternalData.Input.Aim.x;
-                    bool haveInput = (math.abs(horizontal) > float.Epsilon);
+                    //float horizontal = ccInternalData.Input.Aim.x;
+                    //bool haveInput = (math.abs(horizontal) > float.Epsilon);
+                    //if (haveInput)
+                    //{
+                    //    ccInternalData.CurrentRotationAngle += horizontal * ccComponentData.RotationSpeed * DeltaTime;
+                    //}
+
+                    bool haveInput = (math.abs(ccInternalData.Input.Aim.x) > float.Epsilon) ||
+                        (math.abs(ccInternalData.Input.Aim.y) > float.Epsilon);
+
                     if (haveInput)
                     {
-                        ccInternalData.CurrentRotationAngle += horizontal * ccComponentData.RotationSpeed * DeltaTime;
+                        float3 currentForward = math.forward(quaternion.AxisAngle(up, ccInternalData.CurrentRotationAngle));
+                        float3 desiredForward = new float3(ccInternalData.Input.Aim.x, 0.0f, ccInternalData.Input.Aim.y);
+                        
+                        ccInternalData.CurrentRotationAngle += Utilities.RadianAngleSigned(currentForward, desiredForward) * ccComponentData.RotationSpeed * DeltaTime;
+                    }
+                    else
+                    {
+                        haveInput = (math.abs(ccInternalData.Input.Move.x) > float.Epsilon) ||
+                            (math.abs(ccInternalData.Input.Move.y) > float.Epsilon);
+
+                        if(haveInput)
+                        {
+                            float3 currentForward = math.forward(quaternion.AxisAngle(up, ccInternalData.CurrentRotationAngle));
+                            float3 desiredForward = new float3(ccInternalData.Input.Move.x, 0.0f, ccInternalData.Input.Move.y);
+
+                            ccInternalData.CurrentRotationAngle += Utilities.RadianAngleSigned(currentForward, desiredForward) * ccComponentData.RotationSpeed * DeltaTime;
+                        }
                     }
                 }
 

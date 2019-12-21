@@ -9,6 +9,7 @@ namespace FireFighter.CharacterController
 {
     // This input system simply applies the same character input 
     // information to every character controller in the scene
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(ExportPhysicsWorld)), UpdateAfter(typeof(InputSystem)), UpdateBefore(typeof(CharacterControllerSystem))]
     public class CharacterControllerInputSystem : ComponentSystem
     {
@@ -23,7 +24,7 @@ namespace FireFighter.CharacterController
         protected override void OnUpdate()
         {
             // Read user input
-            var input = characterControllerInputEntityQuery.GetSingleton<CharacterControllerInputComponentData>();
+            CharacterControllerInputComponentData input = characterControllerInputEntityQuery.GetSingleton<CharacterControllerInputComponentData>();
             Entities.ForEach((ref CharacterControllerInternalComponentData ccData) =>
                 {
                     ccData.Input.Move = input.Move;

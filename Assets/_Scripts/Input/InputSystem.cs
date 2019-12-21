@@ -7,10 +7,11 @@ using Unity.Entities;
 namespace FireFighter.Input
 {
     [AlwaysUpdateSystem]
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
     public class InputSystem : ComponentSystem, InputActions.ICharacterControllerActions
     {
         private InputActions inputActions;
-        private bool jumpInput = false;
+        private byte jumpInput = 0;
         private Vector2 moveInput = Vector2.zero;
         private Vector2 aimInput = Vector2.zero;
 
@@ -43,7 +44,7 @@ namespace FireFighter.Input
                 Jump = jumpInput
             });
 
-            jumpInput = false;
+            jumpInput = 0;
         }
 
         protected override void OnStopRunning()
@@ -64,14 +65,14 @@ namespace FireFighter.Input
 
         public void OnAim(InputAction.CallbackContext context)
         {
-            //aimInput = context.ReadValue<Vector2>();
+            aimInput = context.ReadValue<Vector2>();
         }
 
         public void OnJump(InputAction.CallbackContext context)
         {
             if(context.started)
             {
-                jumpInput = true;
+                jumpInput = 1;
             }
         }
     }
