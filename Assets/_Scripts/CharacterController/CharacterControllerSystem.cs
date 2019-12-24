@@ -190,6 +190,8 @@ namespace FireFighter.CharacterController
                             ccInternalData.CurrentRotationAngle += Utilities.RadianAngleSigned(currentForward, desiredForward) * ccComponentData.RotationSpeed * DeltaTime;
                         }
                     }
+
+                    ccInternalData.CurrentRotationAngle = Utilities.RadianClampAngle(ccInternalData.CurrentRotationAngle);
                 }
 
                 // Apply input velocities

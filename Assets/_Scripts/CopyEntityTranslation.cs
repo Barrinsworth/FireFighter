@@ -18,9 +18,7 @@ namespace FireFighter
                 return;
             }
 
-            EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-            transform.position = entityManager.GetComponentData<Translation>(entityToTrack).Value;
+            transform.position = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<Translation>(entityToTrack).Value;
         }
         #endregion
 
