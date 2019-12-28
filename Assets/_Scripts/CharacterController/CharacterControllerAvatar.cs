@@ -10,6 +10,7 @@ namespace FireFighter.CharacterController
     {
         [SerializeField] private Animator animator;
         [SerializeField] private float animatorVelocitySmoothTime = 0.1f;
+        [SerializeField] private LookAtIK lookAtIK;
         [SerializeField] private AimIK aimIK;
         
         private Entity entityToTrack = Entity.Null;
@@ -18,8 +19,10 @@ namespace FireFighter.CharacterController
         private float velocityZSmoothDamp = 0.0f;
         private int animatorParameterIdle = Animator.StringToHash("Idle");
         private int animatorParameterVelocityX = Animator.StringToHash("VelocityX");
+        private int animatorParameterVelocityY = Animator.StringToHash("VelocityY");
         private int animatorParameterVelocityZ = Animator.StringToHash("VelocityZ");
         private int animatorParameterAngle = Animator.StringToHash("Angle");
+        private int animatorParameterJumping = Animator.StringToHash("Jumping");
         private int animatorTagTurn = Animator.StringToHash("Turn");
         private int animatorTransitionName = Animator.StringToHash("TurnTransition");
         private Coroutine alignToLookDirectionCoroutine;
@@ -34,6 +37,7 @@ namespace FireFighter.CharacterController
 
         private void Start()
         {
+            lookAtIK.enabled = false;
             aimIK.enabled = false;
         }
 
@@ -43,6 +47,8 @@ namespace FireFighter.CharacterController
 
             CharacterControllerInternalComponentData internalComponentData = entityManager.GetComponentData<CharacterControllerInternalComponentData>(entityToTrack);
 
+            animator.SetBool(animatorParameterJumping, internalComponentData.IsJumping);
+
             Vector3 localVelocity = transform.InverseTransformVector(internalComponentData.LinearVelocity);
             float smoothVelocityX = Mathf.SmoothDamp(animator.GetFloat(animatorParameterVelocityX), localVelocity.x,
                 ref velocityXSmoothDamp, animatorVelocitySmoothTime);
@@ -50,6 +56,7 @@ namespace FireFighter.CharacterController
                 ref velocityZSmoothDamp, animatorVelocitySmoothTime);
 
             animator.SetFloat(animatorParameterVelocityX, smoothVelocityX);
+            animator.SetFloat(animatorParameterVelocityY, internalComponentData.LinearVelocity.y);
             animator.SetFloat(animatorParameterVelocityZ, smoothVelocityZ);
 
             desiredYRotation = internalComponentData.CurrentRotationAngle * Mathf.Rad2Deg;
@@ -78,12 +85,18 @@ namespace FireFighter.CharacterController
                 }
             }
 
-            float aimAngle = Mathf.Clamp(angle, -60.0f, 60.0f);
-            Vector3 targetPosition = transform.position + Quaternion.Euler(0.0f, aimAngle, 0.0f) * Vector3.forward * 2.0f;
-            targetPosition.y = aimIK.solver.transform.position.y;
+            float aimYRotation = transform.eulerAngles.y + Mathf.Clamp(angle, -60.0f, 60.0f);
+            Vector3 aimTargetPosition = aimIK.solver.transform.position +
+                Quaternion.LookRotation(Quaternion.Euler(0.0f, aimYRotation, 0.0f) * Vector3.forward, aimIK.solver.transform.up) * Vector3.forward;
 
-            aimIK.solver.target.position = targetPosition;
+            aimIK.solver.target.position = aimTargetPosition;
             aimIK.solver.Update();
+
+            Vector3 lookTargetPosition = transform.position + Quaternion.Euler(0.0f, desiredYRotation, 0.0f) * Vector3.forward * 2.0f;
+            lookTargetPosition.y = lookAtIK.solver.head.transform.position.y;
+
+            lookAtIK.solver.target.position = lookTargetPosition;
+            lookAtIK.solver.Update();
         }
 
         private void OnAnimatorMove()
