@@ -23,7 +23,6 @@ namespace FireFighter.CharacterController
 
         protected override void OnUpdate()
         {
-            // Read user input
             CharacterControllerInputComponentData input = characterControllerInputEntityQuery.GetSingleton<CharacterControllerInputComponentData>();
             Entities.ForEach((ref CharacterControllerInternalComponentData ccData) =>
                 {

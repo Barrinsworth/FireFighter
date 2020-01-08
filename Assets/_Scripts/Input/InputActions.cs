@@ -212,6 +212,44 @@ namespace FireFighter.Input
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""CharacterHose"",
+            ""id"": ""c4e75a16-5df9-422a-b89e-f411146b54da"",
+            ""actions"": [
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""41f80f2b-3376-4cd3-b3b0-22110c36d375"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""97fd7d5c-9040-4fa9-918d-12b273d78563"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardMouse"",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ec4486be-9249-43ef-a802-af38307647a6"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -249,6 +287,9 @@ namespace FireFighter.Input
             m_CharacterController_Move = m_CharacterController.FindAction("Move", throwIfNotFound: true);
             m_CharacterController_Aim = m_CharacterController.FindAction("Aim", throwIfNotFound: true);
             m_CharacterController_Jump = m_CharacterController.FindAction("Jump", throwIfNotFound: true);
+            // CharacterHose
+            m_CharacterHose = asset.FindActionMap("CharacterHose", throwIfNotFound: true);
+            m_CharacterHose_Shoot = m_CharacterHose.FindAction("Shoot", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -343,6 +384,39 @@ namespace FireFighter.Input
             }
         }
         public CharacterControllerActions @CharacterController => new CharacterControllerActions(this);
+
+        // CharacterHose
+        private readonly InputActionMap m_CharacterHose;
+        private ICharacterHoseActions m_CharacterHoseActionsCallbackInterface;
+        private readonly InputAction m_CharacterHose_Shoot;
+        public struct CharacterHoseActions
+        {
+            private @InputActions m_Wrapper;
+            public CharacterHoseActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+            public InputAction @Shoot => m_Wrapper.m_CharacterHose_Shoot;
+            public InputActionMap Get() { return m_Wrapper.m_CharacterHose; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled => Get().enabled;
+            public static implicit operator InputActionMap(CharacterHoseActions set) { return set.Get(); }
+            public void SetCallbacks(ICharacterHoseActions instance)
+            {
+                if (m_Wrapper.m_CharacterHoseActionsCallbackInterface != null)
+                {
+                    @Shoot.started -= m_Wrapper.m_CharacterHoseActionsCallbackInterface.OnShoot;
+                    @Shoot.performed -= m_Wrapper.m_CharacterHoseActionsCallbackInterface.OnShoot;
+                    @Shoot.canceled -= m_Wrapper.m_CharacterHoseActionsCallbackInterface.OnShoot;
+                }
+                m_Wrapper.m_CharacterHoseActionsCallbackInterface = instance;
+                if (instance != null)
+                {
+                    @Shoot.started += instance.OnShoot;
+                    @Shoot.performed += instance.OnShoot;
+                    @Shoot.canceled += instance.OnShoot;
+                }
+            }
+        }
+        public CharacterHoseActions @CharacterHose => new CharacterHoseActions(this);
         private int m_KeyboardMouseSchemeIndex = -1;
         public InputControlScheme KeyboardMouseScheme
         {
@@ -366,6 +440,10 @@ namespace FireFighter.Input
             void OnMove(InputAction.CallbackContext context);
             void OnAim(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
+        }
+        public interface ICharacterHoseActions
+        {
+            void OnShoot(InputAction.CallbackContext context);
         }
     }
 }
